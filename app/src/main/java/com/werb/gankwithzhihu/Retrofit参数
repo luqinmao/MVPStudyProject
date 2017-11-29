@@ -1,0 +1,73 @@
+
+    @GET("/statuses/public_timeline.json")
+    Call<Timeline> timelineForPublic(@Query("access_token") String token,
+        @Query("count") int count, @Query("page") int page, @Query("base_app") int baseApp);
+
+    @GET("/statuses/public_timeline.json")
+    Call<Timeline> timelineForPublic(@QueryMap Map<String, String> options);
+
+    Map<String, String> options = new HashMap<>();
+    options.put("access_token", AccessTokenKeeper.readAccessToken(getContext()).getToken());
+    call = weiboService.timelineForPublic(options);
+
+
+    @Body
+    用于Post,根据转换方式将实例对象转化为对应字符串传递参数.比如Retrofit添加GsonConverterFactory
+    则是将body转化为gson字符串进行传递.
+
+    @Body标签不能同时和@FormUrlEncoded、@Multipart标签同时使用
+
+    @FormUrlEncoded   //用在post，代表要向服务器发送数据
+    @POST("statuses/repost.json")
+    Call<WeiboTimeline> repost(@Field("id") String id);
+
+    @FormUrlEncoded
+    @POST("statuses/repost.json")
+    Call<WeiboTimeline> repost(@Field(value="id", encoded=true) String id);
+
+
+    @Path
+    用于URL上占位符.如:
+    @GET("group/{id}/users")
+    Call<List<User>> groupList(@Path("id") int groupId);
+    将groupId变量的值替换到url上的id位置
+
+
+    @Part
+    配合@Multipart使用,一般用于文件上传,看官方文档示例:
+    @Multipart
+    @PUT("user/photo")
+    Call<User> updateUser(@Part("photo") RequestBody photo, @Part("description") RequestBody description);
+
+
+    @Header
+    添加http header
+    @GET("user")
+    Call<User> getUser(@Header("Authorization") String authorization)
+    等同于:
+
+    @Headers("Authorization: authorization")//这里authorization就是上面方法里传进来变量的值
+    @GET("widget/list")
+    Call<User> getUser()
+    @Headers
+
+    跟@Header作用一样,只是使用方式不一样,@Header是作为请求方法的参数传入,
+    @Headers是以固定方式直接添加到请求方法上.示例:
+
+    @Headers("Cache-Control: max-age=640000")
+    @GET("widget/list")
+    Call<List<Widget>> widgetList();
+    多个设置:
+
+    @Headers({
+        "Accept: application/vnd.github.v3.full+json",
+        "User-Agent: Retrofit-Sample-App"
+    })
+    @GET("widget/list")
+    Call<List<Widget>> widgetList();
+
+
+
+
+
+
