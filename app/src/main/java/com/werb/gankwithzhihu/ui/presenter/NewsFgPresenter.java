@@ -15,7 +15,6 @@ import com.werb.gankwithzhihu.ui.view.NewsFgView;
 
 import java.util.List;
 
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -43,30 +42,39 @@ public class NewsFgPresenter extends BasePresenter<NewsFgView> {
 
     public void getNewsData(){
         newsFgView = getView();
-        if (newsFgView != null){
+        if (newsFgView != null) {
             mRecyclerView = newsFgView.getRecyclerView();
             layoutManager = newsFgView.getLayoutManager();
-            if (isLoadMore){
+            if (isLoadMore) {
                 page = page + 1;
             }
-            newsApi.getNewsData("top","d050ce77241cf978f252dbd4db9ba00f")
+
+            newsApi.getNewsData("top", "d050ce77241cf978f252dbd4db9ba00f")
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<NewsData>() {
-                        @Override
-                        public void onCompleted() {
-                        }
+                    .subscribe(newsData -> {
+                        displayNewsList(newsData);
+                    },this::loadError);
 
-                        @Override
-                        public void onError(Throwable e) {
-                            loadError(e);
-                        }
+//            newsApi.getNewsData("top","d050ce77241cf978f252dbd4db9ba00f")
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe(new Subscriber<NewsData>() {
+//                        @Override
+//                        public void onCompleted() {
+//                        }
+//
+//                        @Override
+//                        public void onError(Throwable e) {
+//                            loadError(e);
+//                        }
+//
+//                        @Override
+//                        public void onNext(NewsData newsData) {
+//                            displayNewsList(newsData);
+//                        }
+//                    });
 
-                        @Override
-                        public void onNext(NewsData newsData) {
-                            displayNewsList(newsData);
-                        }
-                    });
         }
 
 
